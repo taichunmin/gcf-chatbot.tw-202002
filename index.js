@@ -1,13 +1,6 @@
-require('dotenv').config() // init dotenv
-
 const _ = require('lodash')
 const Line = require('@line/bot-sdk').Client
 const JSON5 = require('json5')
-
-const line = new Line({
-  channelAccessToken: _.get(process, ['env', 'CHANNEL_ACCESS_TOKEN']),
-  channelSecret: _.get(process, ['env', 'CHANNEL_SECRET']),
-})
 
 const errToString = err => {
   const debug = {}
@@ -45,6 +38,11 @@ const messageText = text => {
  */
 exports.main = async (req, res) => {
   try {
+    // get access token
+    const channelAccessToken = req.path.substring(1)
+    if (!/^[a-zA-Z0-9+/=]+$/.test(req.path)) throw new Error('wrong channel access token')
+    const line = new Line({ channelAccessToken })
+
     const events = _.get(req, 'body.events', [])
     await Promise.all(_.map(events, async event => {
       let messages
@@ -68,5 +66,6 @@ exports.main = async (req, res) => {
     res.status(200).send('OK')
   } catch (err) {
     console.log(errToString(err))
+    res.status(err.status || 500).send(err.message)
   }
 }
