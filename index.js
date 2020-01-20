@@ -40,7 +40,7 @@ exports.main = async (req, res) => {
   try {
     // get access token
     const channelAccessToken = req.path.substring(1)
-    if (!/^[a-zA-Z0-9+/=]+$/.test(req.path)) throw new Error('wrong channel access token')
+    if (!/^[a-zA-Z0-9+/=]+$/.test(channelAccessToken)) throw new Error('wrong channel access token')
     const line = new Line({ channelAccessToken })
 
     const events = _.get(req, 'body.events', [])
