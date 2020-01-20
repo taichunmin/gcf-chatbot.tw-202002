@@ -49,7 +49,8 @@ exports.main = async (req, res) => {
       try {
         if (_.get(event, 'message.type') === 'text') { // 如果是 JSON 就嘗試回傳
           try {
-            messages = JSON5.parse(_.get(event, 'message.text'))
+            const tmp = JSON5.parse(_.get(event, 'message.text'))
+            if (_.hasIn(tmp, 'type')) messages = JSON5.parse(_.get(event, 'message.text'))
           } catch (err) {
             console.log(errToString(err))
           }
